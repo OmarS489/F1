@@ -1,0 +1,39 @@
+import fastf1
+import seaborn as sns
+from matplotlib import pyplot as plt
+import pandas as pd
+
+def get_driver_data(year, race_name, driver_code):
+    try:
+        race = fastf1.get_session(year, race_name, 'R')
+        race.load()
+    except Exception as e:
+        print(f"Error loading race data: {e}")
+        exit()
+
+    driver_laps = race.laps.pick_driver(driver_code).pick_quicklaps()
+    average_pace = driver_laps['LapTime'].mean().total_seconds()
+
+    return driver_laps, average_pace
+
+driver_laps1, avg_pace1 = get_driver_data(2023, 'Brazil', 'HAM')
+driver_laps2, avg_pace2 = get_driver_data(2022, 'Brazil', 'HAM')
+
+labels = ['Hamilton', 'Hamilton2',
+          f'Avg Pace Hamilton: {avg_pace1:.2f} secs',
+          f'Avg Pace Hamilton: {avg_pace2:.2f} secs']
+
+plt.plot(driver_laps1['LapNumber'], driver_laps1['LapTime'], color='red', linewidth=2)
+plt.plot(driver_laps2['LapNumber'], driver_laps2['LapTime'], color='blue', linestyle='--')
+
+plt.grid(color='lightgray', which='major', axis='both')
+sns.despine(left=True, bottom=True)
+plt.gca().xaxis.set_major_locator(plt.MultipleLocator(5))
+
+plt.legend(labels)
+plt.xlabel("Lap Number")
+plt.ylabel("Lap Time")
+plt.title("Comparison of Lap Times: Hamilton vs Hamilton2")
+
+plt.tight_layout()
+plt.show()
