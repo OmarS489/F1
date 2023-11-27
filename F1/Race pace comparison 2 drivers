@@ -3,6 +3,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 import pandas as pd
 
+
 def get_driver_data(year, race_name, driver_code):
     try:
         race = fastf1.get_session(year, race_name, 'R')
